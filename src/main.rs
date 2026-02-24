@@ -1,24 +1,16 @@
-use actix_web::{App, HttpResponse, HttpServer, Responder, web};
-use serde_json::json;
-use sqlx::PgPool;
+use actix_web::{App, HttpServer, web};
 use dotenv::dotenv;
+use sqlx::PgPool;
+
 mod controllers;
 mod database;
+mod extractors;
 mod services;
 pub mod structs;
 pub mod utils;
-pub mod extractors;
 
 struct AppState {
     db: PgPool,
-}
-
-async fn health(state: web::Data<AppState>) -> impl Responder {
-    let _pool = &state.db;
-
-    HttpResponse::Ok().json(json!({
-        "status": "ok"
-    }))
 }
 
 #[actix_web::main]
@@ -32,9 +24,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(app_state.clone())
             .service(controllers::members_controller::list_members)
             .service(controllers::members_controller::add_member)
-
             .service(controllers::members_controller::members_me)
-
+            .service(controllers::health_controller::health)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
