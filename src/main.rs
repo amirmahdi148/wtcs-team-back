@@ -24,6 +24,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(app_state.clone())
             .service(controllers::members_controller::list_members)
             .service(controllers::members_controller::add_member)
+            .service(controllers::members_controller::members_get)
             .service(controllers::members_controller::members_me)
             .service(controllers::health_controller::health)
     })

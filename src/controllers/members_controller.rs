@@ -1,6 +1,6 @@
 use crate::AppState;
 use crate::extractors::auth::Auth;
-use crate::services::members_service::{add_members, show_members};
+use crate::services::members_service::{add_members, get_member_details, show_members};
 use crate::structs::members_struct::AddMembers;
 use actix_web::{HttpResponse, Responder, get, post, web};
 use serde_json::json;
@@ -26,4 +26,13 @@ pub async fn members_me(auth: Auth) -> impl Responder {
         "subject": auth.claims.sub,
         "exp": auth.claims.exp
     }))
+}
+
+#[get("/members/{username}")]
+pub async fn members_get(
+    state: web::Data<AppState>,
+    username: web::Path<String>,
+) -> impl Responder {
+    let (status, body) = get_member_details(&state.db, &username).await;
+    HttpResponse::build(status).json(body)
 }
