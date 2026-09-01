@@ -1,5 +1,6 @@
 use crate::AppState;
 use crate::extractors::auth::Auth;
+use crate::services::members_service::me_service::get_me_details;
 use crate::services::members_service::{add_members, get_member_details, show_members};
 use crate::structs::members_struct::AddMembers;
 use actix_web::{HttpResponse, Responder, get, post, web};
@@ -19,13 +20,10 @@ pub async fn add_member(
     HttpResponse::build(status).json(body)
 }
 
-#[get("/members/me")]
-pub async fn members_me(auth: Auth) -> impl Responder {
-    HttpResponse::Ok().json(json!({
-        "ok": true,
-        "subject": auth.claims.sub,
-        "exp": auth.claims.exp
-    }))
+#[get("/me")]
+pub async fn members_me(auth: Auth, state: web::Data<AppState>) -> impl Responder {
+    let (status, body) = get_me_details(auth.claims.sub, &state.db).await;
+    HttpResponse::build(status).json(body)
 }
 
 #[get("/members/{username}")]

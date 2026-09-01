@@ -1,0 +1,21 @@
+{
+  "name": "wtcs-team-back",
+  "version": "1.0.0",
+  "description": "Backend API for members profile data using Rust (`actix-web`) + PostgreSQL (`sqlx`).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amirmahdi148/wtcs-team-back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/amirmahdi148/wtcs-team-back/issues"
+  },
+  "homepage": "https://github.com/amirmahdi148/wtcs-team-back#readme"
+}

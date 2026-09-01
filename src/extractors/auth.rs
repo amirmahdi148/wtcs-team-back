@@ -1,9 +1,10 @@
 use actix_web::dev::Payload;
 use actix_web::error::ErrorUnauthorized;
 use actix_web::{Error, FromRequest, HttpRequest};
-use jsonwebtoken::{DecodingKey, Validation, decode};
+use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use serde::{Deserialize, Serialize};
 use std::future::{Ready, ready};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Claims {
@@ -55,4 +56,38 @@ impl FromRequest for Auth {
             Err(_) => ready(Err(ErrorUnauthorized("invalid or expired token"))),
         }
     }
+}
+
+pub fn create_jwt(
+    user_id: i32,
+    expiry_seconds: u64,
+) -> Result<String, jsonwebtoken::errors::Error> {
+    // Get the current time
+    let current_time = SystemTime::now();
+    // Calculate the expiration time
+    let expiry_time = current_time
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        + std::time::Duration::from_secs(expiry_seconds);
+    let expiry_timestamp = expiry_time.as_secs() as usize;
+
+    // Create the claims for the token
+    let claims = Claims {
+        sub: user_id.to_string(),
+        exp: expiry_timestamp,
+        // Add any other claims here
+        // roles: vec!["user".to_string()],
+    };
+
+    // Create a new JWT header
+    let header = Header::new(jsonwebtoken::Algorithm::HS256); // Using HS256 algorithm
+
+    // Encode the claims into a JWT token
+    let token = encode(
+        &header,
+        &claims,
+        &EncodingKey::from_secret(jwt_secret().as_bytes()),
+    )?;
+
+    Ok(token)
 }

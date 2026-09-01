@@ -2,7 +2,7 @@ use crate::structs::members_struct::AddMembers;
 use crate::utils::{hasher, sanitize};
 use actix_web::http::StatusCode;
 use actix_web::web;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use sqlx::Error;
 use sqlx::PgPool;
 use sqlx::Row;
